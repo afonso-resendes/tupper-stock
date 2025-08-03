@@ -187,19 +187,21 @@ const ThankYouContent = () => {
 
 const ThankYouPage = () => {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gray-50 py-12">
-        <div className="max-w-2xl mx-auto px-6">
-          <div className="bg-white rounded-xl shadow-sm p-8 text-center">
-            <div className="animate-pulse">
-              <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-6"></div>
-              <div className="h-8 bg-gray-200 rounded mb-4"></div>
-              <div className="h-6 bg-gray-200 rounded mb-6"></div>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 py-12">
+          <div className="max-w-2xl mx-auto px-6">
+            <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+              <div className="animate-pulse">
+                <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-6"></div>
+                <div className="h-8 bg-gray-200 rounded mb-4"></div>
+                <div className="h-6 bg-gray-200 rounded mb-6"></div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <ThankYouContent />
     </Suspense>
   );
