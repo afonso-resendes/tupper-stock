@@ -71,17 +71,17 @@ const Testimonials = () => {
           {testimonials.map((testimonial) => (
             <div
               key={testimonial.id}
-              className="bg-white p-8 rounded-xl hover:shadow-sm transition-shadow duration-200"
+              className="bg-white p-8 rounded-xl hover:shadow-sm transition-shadow duration-200 flex flex-col h-full"
             >
               <div className="flex items-center mb-4">
                 {renderStars(testimonial.rating)}
               </div>
 
-              <blockquote className="text-gray-700 mb-6 leading-relaxed text-sm">
+              <blockquote className="text-gray-700 mb-6 leading-relaxed text-sm flex-grow">
                 "{testimonial.content}"
               </blockquote>
 
-              <div className="flex items-center">
+              <div className="flex items-center mt-auto">
                 <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center text-white font-medium mr-4">
                   {testimonial.avatar}
                 </div>

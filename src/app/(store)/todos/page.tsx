@@ -170,52 +170,54 @@ const ProductsPageContent = () => {
         {/* Filters and Sort */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 sm:mb-8 space-y-4 md:space-y-0">
           {/* Categories */}
-          <div className="flex flex-wrap gap-2">
-            {/* All Products button */}
-            <button
-              onClick={() => setSelectedCategory("all")}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
-                selectedCategory === "all"
-                  ? "bg-black text-white shadow-md"
-                  : "bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-900"
-              }`}
-            >
-              Todos os Produtos
-            </button>
+          <div className="w-full overflow-x-auto">
+            <div className="flex gap-2 min-w-max pb-2">
+              {/* All Products button */}
+              <button
+                onClick={() => setSelectedCategory("all")}
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 whitespace-nowrap ${
+                  selectedCategory === "all"
+                    ? "bg-black text-white shadow-md"
+                    : "bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-900"
+                }`}
+              >
+                Todos os Produtos
+              </button>
 
-            {/* Dynamic categories */}
-            {categoriesLoading
-              ? // Loading skeleton for categories
-                Array.from({ length: 4 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="w-20 h-8 bg-gray-200 rounded-lg animate-pulse"
-                  ></div>
-                ))
-              : categories.map((category) => (
-                  <button
-                    key={category.title}
-                    onClick={() => setSelectedCategory(category.title)}
-                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
-                      selectedCategory === category.title
-                        ? "bg-black text-white shadow-md"
-                        : "bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-900"
-                    }`}
-                  >
-                    {category.title}
-                  </button>
-                ))}
+              {/* Dynamic categories */}
+              {categoriesLoading
+                ? // Loading skeleton for categories
+                  Array.from({ length: 4 }).map((_, index) => (
+                    <div
+                      key={index}
+                      className="w-20 h-8 bg-gray-200 rounded-lg animate-pulse flex-shrink-0"
+                    ></div>
+                  ))
+                : categories.map((category) => (
+                    <button
+                      key={category.title}
+                      onClick={() => setSelectedCategory(category.title)}
+                      className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 whitespace-nowrap flex-shrink-0 ${
+                        selectedCategory === category.title
+                          ? "bg-black text-white shadow-md"
+                          : "bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-900"
+                      }`}
+                    >
+                      {category.title}
+                    </button>
+                  ))}
+            </div>
           </div>
 
           {/* Sort */}
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
             <span className="text-sm font-medium text-gray-700">
               Ordenar por:
             </span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-2 text-sm border-2 border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black font-medium text-gray-700 hover:border-gray-400 transition-colors duration-200"
+              className="w-full sm:w-auto px-4 py-3 sm:py-2 text-sm border-2 border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black font-medium text-gray-700 hover:border-gray-400 transition-colors duration-200"
             >
               {sortOptions.map((option) => (
                 <option key={option.id} value={option.id}>
@@ -288,18 +290,18 @@ const ProductsPageContent = () => {
                     )}
                   </div>
 
-                  <div className="p-6 flex-1 flex flex-col">
-                    <h3 className="text-base font-medium text-gray-900 mb-2 group-hover:text-gray-700 transition-colors line-clamp-2 min-h-[2.5rem]">
+                  <div className="p-4 sm:p-6 flex-1 flex flex-col">
+                    <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-2 group-hover:text-gray-700 transition-colors line-clamp-2 min-h-[2.5rem]">
                       {product.name}
                     </h3>
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-3 flex-1">
+                    <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4 line-clamp-3 flex-1">
                       {product.description}
                     </p>
                   </div>
                 </Link>
 
-                <div className="px-6 pb-6 mt-auto space-y-3">
-                  <div className="flex items-center justify-between">
+                <div className="px-4 sm:px-6 pb-4 sm:pb-6 mt-auto space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
                     <div className="flex items-center space-x-2">
                       {product.originalPrice &&
                       product.originalPrice > product.price ? (
@@ -341,7 +343,7 @@ const ProductsPageContent = () => {
                       handleAddToCart(product);
                     }}
                     disabled={!product.availableForSale || cartLoading}
-                    className={`w-full font-medium py-2 px-4 rounded-lg transition duration-200 cursor-pointer ${
+                    className={`w-full font-medium py-2.5 sm:py-2 px-3 sm:px-4 rounded-lg transition duration-200 cursor-pointer text-sm sm:text-base ${
                       product.availableForSale && !cartLoading
                         ? "bg-black hover:bg-gray-800 text-white"
                         : "bg-gray-300 text-gray-500 cursor-not-allowed"

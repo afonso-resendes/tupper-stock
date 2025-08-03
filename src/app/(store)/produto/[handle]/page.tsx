@@ -4,6 +4,7 @@ import { useProduct, useRelatedProducts } from "@/hooks/useShopify";
 import { useCart } from "@/contexts/CartContext";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 const ProductPage = () => {
   const params = useParams();
@@ -174,12 +175,15 @@ const ProductPage = () => {
             <div className="p-4 sm:p-6 lg:p-8">
               <div className="space-y-4">
                 {/* Main Image */}
-                <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden">
+                <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden relative">
                   {allImages.length > 0 ? (
-                    <img
+                    <Image
                       src={allImages[selectedImage]}
                       alt={`${product.name} - Imagem ${selectedImage + 1}`}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      priority={selectedImage === 0}
                     />
                   ) : (
                     <div className="w-full h-full bg-gray-100 flex items-center justify-center">
@@ -196,21 +200,24 @@ const ProductPage = () => {
 
                 {/* Image Thumbnails */}
                 {allImages.length > 1 && (
-                  <div className="flex space-x-2 overflow-x-auto">
+                  <div className="flex space-x-2 overflow-x-auto pb-2">
                     {allImages.map((image: string, index: number) => (
                       <button
                         key={index}
                         onClick={() => setSelectedImage(index)}
-                        className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors duration-200 ${
+                        className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors duration-200 relative ${
                           selectedImage === index
                             ? "border-black"
                             : "border-gray-200 hover:border-gray-300"
                         }`}
                       >
-                        <img
+                        <Image
                           src={image}
                           alt={`${product.name} - Miniatura ${index + 1}`}
-                          className="w-full h-full object-cover"
+                          width={64}
+                          height={64}
+                          className="object-cover w-full h-full"
+                          sizes="64px"
                         />
                       </button>
                     ))}
@@ -406,12 +413,14 @@ const ProductPage = () => {
                 className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 flex flex-col h-full"
               >
                 <Link href={`/produto/${relatedProduct.handle}`}>
-                  <div className="aspect-square bg-gray-50 overflow-hidden">
+                  <div className="aspect-square bg-gray-50 overflow-hidden relative">
                     {relatedProduct.image ? (
-                      <img
+                      <Image
                         src={relatedProduct.image}
                         alt={relatedProduct.name}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+                        fill
+                        className="object-cover hover:scale-105 transition-transform duration-200"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                     ) : (
                       <div className="w-full h-full bg-gray-100 flex items-center justify-center">

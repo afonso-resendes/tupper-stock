@@ -35,6 +35,7 @@ export async function GET(
         : parseFloat(product.priceRange.minVariantPrice.amount),
       category: product.productType || "storage",
       image: product.images.edges[0]?.node?.url || null,
+      images: product.images.edges.map(({ node }: any) => node.url),
       handle: product.handle,
       availableForSale: product.availableForSale,
       variants: product.variants.edges.map(({ node: variant }: any) => ({
