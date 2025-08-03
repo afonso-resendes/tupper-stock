@@ -101,7 +101,7 @@ const ProductShowcase = () => {
             </div>
           ) : (
             // Products grid
-            products.map((product) => (
+            products.map((product: any) => (
               <div
                 key={product.id}
                 className="bg-white border border-gray-100 hover:border-gray-200 transition-colors duration-200 group rounded-xl overflow-hidden flex flex-col h-full"

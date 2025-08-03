@@ -3,11 +3,10 @@ import { storefrontClient, PRODUCT_BY_HANDLE_QUERY } from "@/lib/shopify";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { handle: string } }
+  { params }: { params: Promise<{ handle: string }> }
 ) {
+  const { handle } = await params;
   try {
-    const { handle } = params;
-
     if (!handle) {
       return NextResponse.json(
         { error: "Product handle is required" },

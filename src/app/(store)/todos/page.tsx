@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   useProducts,
@@ -9,7 +9,8 @@ import {
 import { useCart } from "@/contexts/CartContext";
 import Link from "next/link";
 
-const ProductsPage = () => {
+// Component that uses useSearchParams
+const ProductsPageContent = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("featured");
   const [searchQuery, setSearchQuery] = useState("");
@@ -368,6 +369,15 @@ const ProductsPage = () => {
         )}
       </div>
     </div>
+  );
+};
+
+// Main component wrapped in Suspense
+const ProductsPage = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProductsPageContent />
+    </Suspense>
   );
 };
 

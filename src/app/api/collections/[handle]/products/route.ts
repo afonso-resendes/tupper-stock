@@ -86,10 +86,10 @@ const COLLECTION_PRODUCTS_QUERY = `
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { handle: string } }
+  { params }: { params: Promise<{ handle: string }> }
 ) {
+  const { handle } = await params;
   try {
-    const { handle } = params;
     const { searchParams } = new URL(request.url);
     const first = parseInt(searchParams.get("first") || "20");
     const after = searchParams.get("after") || undefined;

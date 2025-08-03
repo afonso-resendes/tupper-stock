@@ -22,7 +22,7 @@ const SearchModule = ({ isOpen, onClose }: SearchModuleProps) => {
     error: searchError,
   } = useProducts({
     first: 20,
-    query: searchQuery.length > 2 ? searchQuery : "",
+    search: searchQuery.length > 2 ? searchQuery : "",
   });
 
   const formatPrice = (price: number) => {
