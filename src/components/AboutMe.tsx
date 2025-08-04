@@ -23,32 +23,38 @@ const AboutMe = () => {
               Sobre Mim
             </h2>
             <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
-              Olá! O meu nome é Manuela Macêdo e sou Business Leader da
-              Tupperware Açores.
+              Olá! O meu nome é Manuela Macêdo e sou representante da icónica
+              marca Tupperware desde 2011. Decidi inscrever-me para ganhar um
+              extra e também ter para ter oportunidade de comprar os artigos com
+              desconto.
             </p>
             <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
-              Sou professora e juntei-me à Tupperware há 10 anos, inicialmente
-              apenas como colaboradora. Foi das melhores decisões da minha vida,
-              apaixonei-me pela marca Tupperware, fiz novos amigos e vivi
-              experiências incríveis.
+              Foi das melhores decisões da minha vida, uma vez que já era
+              apaixonada pela marca, e juntar a necessidade, a praticidade e,
+              acima de tudo, a qualidade facilitou essa minha opção. Ao longo
+              dos anos, fiz novas amizades, vivi experiências incríveis, visitei
+              vários países e o mais importante… mudei a vida de várias pessoas
+              através da oportunidade de negócio.
             </p>
             <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
-              Há 5 anos, tirei uma licença sem vencimento e dediquei-me a 100% à
-              Tupperware. Foram anos de muito trabalho, mas também de muitas
-              conquistas. Criei uma equipa grande e vencedora, e juntos vendemos
-              milhares de produtos Tupperware.
+              Estou dedicada à Tupperware desde 2018. Têm sido anos de muito
+              trabalho, mas também de muitas conquistas. Criei uma equipa grande
+              e vencedora, e juntos vendemos milhares de produtos Tupperware,
+              levando a casa dos clientes o melhor produto do mundo.
             </p>
             <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
               Infelizmente, em 2025, a Tupperware anunciou o encerramento da sua
-              atividade. Como resultado, fiquei com muito material em stock,
-              produtos novos, nunca usados, que agora merecem um novo lar.
+              atividade na Europa. Como resultado dessa situação, fiquei com
+              muito material em stock, produtos novos, nunca usados que agora
+              merecem um novo lar.
             </p>
             <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
               Criei esta loja online com a ajuda do meu filho para facilitar
               esse processo.
             </p>
             <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
-              Espero que gostem e que encontrem aqui algo útil e especial!
+              Espero que gostem e que encontrem aqui algo útil e especial para
+              facilitar o vosso dia-a-dia, poupando tempo, trabalho e energia.
             </p>
 
             {/* CTA Button */}

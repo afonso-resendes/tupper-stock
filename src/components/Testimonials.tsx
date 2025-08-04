@@ -8,7 +8,7 @@ const Testimonials = () => {
       role: "Chef Doméstica",
       rating: 5,
       content:
-        "Estes recipientes de tupperware transformaram completamente a minha rotina de preparação de refeições. As vedações herméticas mantêm os meus alimentos frescos durante dias, e o design empilhável poupa tanto espaço na minha cozinha!",
+        "Estes produtos transformaram completamente a minha rotina de preparação de refeições, simplificando a sua confeção. As suas tampas herméticas mantêm os meus alimentos frescos e crocantes durante dias, e o design permite o seu armazenamento de forma empilhável poupando imenso espaço na minha cozinha!",
       avatar: "MS",
     },
     {
@@ -17,7 +17,7 @@ const Testimonials = () => {
       role: "Pai Trabalhador",
       rating: 5,
       content:
-        "Como pai ocupado, preciso de soluções de armazenamento de alimentos fiáveis. Estes recipientes são seguros para microondas, lava-louças e incrivelmente duráveis. Sobreviveram a inúmeras viagens para a escola e trabalho.",
+        "Como pai ocupado, preciso de soluções de armazenamento de alimentos fiáveis. Estes recipientes são seguros para microondas e incrivelmente duráveis quando usados de acordo com suas instruções. Sobreviveram a inúmeras viagens para a escola e trabalho.",
       avatar: "JS",
     },
     {
@@ -26,7 +26,7 @@ const Testimonials = () => {
       role: "Entusiasta de Fitness",
       rating: 5,
       content:
-        "Perfeito para a minha preparação de refeições! Os recipientes de controlo de porções ajudam-me a manter-me no caminho certo com os meus objetivos nutricionais. A qualidade é excecional e ficam ótimos no meu frigorífico.",
+        "Perfeitos para a minha preparação de refeições! Os recipientes com diferentes funcionalidades e capacidades ajudam-me a manter-me no caminho certo com os meus objetivos nutricionais. A qualidade é excecional e ficam ótimos e bem armazenados no meu frigorífico.",
       avatar: "AC",
     },
     {
