@@ -4,6 +4,8 @@ import { useProduct, useRelatedProducts } from "@/hooks/useShopify";
 import { useCart } from "@/contexts/CartContext";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import ProductStructuredData from "@/components/ProductStructuredData";
+import BreadcrumbStructuredData from "@/components/BreadcrumbStructuredData";
 
 const ProductPage = () => {
   const params = useParams();
@@ -147,6 +149,18 @@ const ProductPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {product && (
+        <>
+          <ProductStructuredData product={product} />
+          <BreadcrumbStructuredData
+            items={[
+              { name: "Início", url: "/" },
+              { name: "Produtos", url: "/todos" },
+              { name: product.name, url: `/produto/${handle}` },
+            ]}
+          />
+        </>
+      )}
       {/* Breadcrumb */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-4 py-4">

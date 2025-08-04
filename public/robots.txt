@@ -1,8 +1,12 @@
 User-agent: *
 Allow: /
 
+# Disallow admin and API routes
+Disallow: /api/
+Disallow: /admin/
+
 # Sitemap
-Sitemap: https://tupperstock.pt/sitemap.xml
+Sitemap: https://tupperstock.com/sitemap.xml
 
 # Crawl-delay
 Crawl-delay: 1 
