@@ -37,13 +37,13 @@ const ProductStructuredData: React.FC<ProductStructuredDataProps> = ({
       seller: {
         "@type": "Organization",
         name: "TupperStock",
+        url: "https://tupperstock.com",
       },
+      priceValidUntil: new Date(
+        Date.now() + 365 * 24 * 60 * 60 * 1000
+      ).toISOString(),
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.8",
-      reviewCount: "127",
-    },
+    condition: "https://schema.org/NewCondition",
   };
 
   if (product.originalPrice && product.originalPrice > product.price) {

@@ -16,14 +16,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     if (response.ok) {
       const product = await response.json();
 
+      // Format price for display
+      const formattedPrice = product.price
+        ? `${product.price.toFixed(2)} €`
+        : "";
+      const availabilityText = product.availableForSale
+        ? product.totalInventory && product.totalInventory > 0
+          ? `Disponível para entrega (${product.totalInventory} em stock)`
+          : "Disponível para entrega"
+        : "Indisponível";
+
+      // Create rich description with price and availability
+      const richDescription = product.description
+        ? `${product.description.substring(
+            0,
+            120
+          )}... ${formattedPrice} - ${availabilityText}. Compre agora em TupperStock.`
+        : `${product.name} - ${formattedPrice} - ${availabilityText}. Stock premium de Tupperware com entrega em Portugal.`;
+
       return {
-        title: `${product.name} | TupperStock - Tupperware Stock Premium`,
-        description: product.description
-          ? `${product.description.substring(
-              0,
-              160
-            )}... Compre agora em TupperStock. Stock premium de Tupperware.`
-          : `Compre ${product.name} em TupperStock. Stock premium de Tupperware com entrega em Portugal.`,
+        title: `${product.name} - ${formattedPrice} | TupperStock`,
+        description: richDescription,
         keywords: [
           "tupper stock",
           "tupperware stock",
@@ -33,16 +46,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           "stock tupperware",
           "recipientes premium",
           "armazenamento alimentos",
+          "comprar tupperware",
+          "tupperware online",
         ],
         openGraph: {
-          title: `${product.name} | TupperStock`,
-          description: product.description
-            ? `${product.description.substring(
-                0,
-                160
-              )}... Compre agora em TupperStock.`
-            : `Compre ${product.name} em TupperStock. Stock premium de Tupperware.`,
+          title: `${product.name} - ${formattedPrice}`,
+          description: richDescription,
           url: `https://tupperstock.com/produto/${handle}`,
+          type: "website",
           images: product.image
             ? [
                 {
@@ -56,17 +67,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         },
         twitter: {
           card: "summary_large_image",
-          title: `${product.name} | TupperStock`,
-          description: product.description
-            ? `${product.description.substring(
-                0,
-                160
-              )}... Compre agora em TupperStock.`
-            : `Compre ${product.name} em TupperStock. Stock premium de Tupperware.`,
+          title: `${product.name} - ${formattedPrice}`,
+          description: richDescription,
           images: product.image ? [product.image] : undefined,
         },
         alternates: {
           canonical: `/produto/${handle}`,
+        },
+        other: {
+          "product:price:amount": product.price?.toString() || "",
+          "product:price:currency": "EUR",
+          "product:availability": product.availableForSale
+            ? "in stock"
+            : "out of stock",
+          "product:condition": "new",
         },
       };
     }
