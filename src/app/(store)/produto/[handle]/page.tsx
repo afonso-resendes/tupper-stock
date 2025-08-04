@@ -4,7 +4,7 @@ import { useProduct, useRelatedProducts } from "@/hooks/useShopify";
 import { useCart } from "@/contexts/CartContext";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
+
 
 const ProductPage = () => {
   const params = useParams();
@@ -175,15 +175,12 @@ const ProductPage = () => {
             <div className="p-4 sm:p-6 lg:p-8">
               <div className="space-y-4">
                 {/* Main Image */}
-                <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden relative">
+                <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden">
                   {allImages.length > 0 ? (
-                    <Image
+                    <img
                       src={allImages[selectedImage]}
                       alt={`${product.name} - Imagem ${selectedImage + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      priority={selectedImage === 0}
+                      className="w-full h-full object-cover"
                     />
                   ) : (
                     <div className="w-full h-full bg-gray-100 flex items-center justify-center">
@@ -211,13 +208,10 @@ const ProductPage = () => {
                             : "border-gray-200 hover:border-gray-300"
                         }`}
                       >
-                        <Image
+                        <img
                           src={image}
                           alt={`${product.name} - Miniatura ${index + 1}`}
-                          width={64}
-                          height={64}
-                          className="object-cover w-full h-full"
-                          sizes="64px"
+                          className="w-full h-full object-cover"
                         />
                       </button>
                     ))}
@@ -413,14 +407,12 @@ const ProductPage = () => {
                 className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200 flex flex-col h-full"
               >
                 <Link href={`/produto/${relatedProduct.handle}`}>
-                  <div className="aspect-square bg-gray-50 overflow-hidden relative">
+                  <div className="aspect-square bg-gray-50 overflow-hidden">
                     {relatedProduct.image ? (
-                      <Image
+                      <img
                         src={relatedProduct.image}
                         alt={relatedProduct.name}
-                        fill
-                        className="object-cover hover:scale-105 transition-transform duration-200"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
                       />
                     ) : (
                       <div className="w-full h-full bg-gray-100 flex items-center justify-center">
