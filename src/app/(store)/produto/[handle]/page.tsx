@@ -5,7 +5,6 @@ import { useCart } from "@/contexts/CartContext";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 
-
 const ProductPage = () => {
   const params = useParams();
   const handle = params.handle as string;
