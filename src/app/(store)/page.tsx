@@ -8,22 +8,33 @@ import JoinUs from "../../components/JoinUs";
 import Footer from "../../components/Footer";
 
 export const metadata: Metadata = {
-  title: "TupperStock - Tupperware Premium Açores | Armazenamento de Alimentos",
+  title:
+    "TupperStock - Tupperware Stock Premium | Recipientes de Armazenamento",
   description:
-    "TupperStock - Loja online de Tupperware nos Açores. Recipientes premium para armazenamento de alimentos, frescos por mais tempo. Entrega ao domicílio e levantamento local.",
+    "TupperStock - Loja online especializada em stock de Tupperware premium. Recipientes de armazenamento de alimentos de alta qualidade, frescos por mais tempo. Entrega em Portugal e Açores.",
   keywords: [
-    "Tupperware Açores",
-    "loja tupperware online",
+    "tupper stock",
+    "tupperware stock",
+    "tupperware",
     "recipientes armazenamento",
-    "tupperware premium",
+    "tupperware portugal",
+    "stock tupperware",
+    "recipientes premium",
     "conservação alimentos",
-    "organização cozinha açores",
+    "organização cozinha",
+    "tupperware online",
+    "recipientes plástico",
+    "armazenamento alimentos",
+    "tupperware açores",
+    "loja tupperware",
+    "tupper stock portugal",
   ],
   openGraph: {
-    title: "TupperStock - Tupperware Premium Açores",
+    title:
+      "TupperStock - Tupperware Stock Premium | Recipientes de Armazenamento",
     description:
-      "Loja online de Tupperware nos Açores. Recipientes premium para armazenamento de alimentos.",
-    url: "https://tupperstock.pt",
+      "TupperStock - Loja online especializada em stock de Tupperware premium. Recipientes de armazenamento de alimentos de alta qualidade, frescos por mais tempo.",
+    url: "https://tupperstock.com",
     siteName: "TupperStock",
     locale: "pt_PT",
     type: "website",
