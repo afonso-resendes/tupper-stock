@@ -6,6 +6,54 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
+// Fallback Image Component
+const OptimizedImage = ({
+  src,
+  alt,
+  fill = false,
+  width,
+  height,
+  className,
+  sizes,
+  priority = false,
+}: {
+  src: string;
+  alt: string;
+  fill?: boolean;
+  width?: number;
+  height?: number;
+  className: string;
+  sizes?: string;
+  priority?: boolean;
+}) => {
+  const [useFallback, setUseFallback] = useState(false);
+
+  if (useFallback) {
+    return (
+      <img
+        src={src}
+        alt={alt}
+        className={className}
+        style={fill ? { width: "100%", height: "100%" } : {}}
+      />
+    );
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill={fill}
+      width={width}
+      height={height}
+      className={className}
+      sizes={sizes}
+      priority={priority}
+      onError={() => setUseFallback(true)}
+    />
+  );
+};
+
 const ProductPage = () => {
   const params = useParams();
   const handle = params.handle as string;
@@ -52,6 +100,7 @@ const ProductPage = () => {
   React.useEffect(() => {
     if (product && product.images && product.images.length > 0) {
       setSelectedImage(0);
+      console.log("Product images loaded:", product.images);
     }
   }, [product]);
 
@@ -177,7 +226,7 @@ const ProductPage = () => {
                 {/* Main Image */}
                 <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden relative">
                   {allImages.length > 0 ? (
-                    <Image
+                    <OptimizedImage
                       src={allImages[selectedImage]}
                       alt={`${product.name} - Imagem ${selectedImage + 1}`}
                       fill
@@ -211,7 +260,7 @@ const ProductPage = () => {
                             : "border-gray-200 hover:border-gray-300"
                         }`}
                       >
-                        <Image
+                        <OptimizedImage
                           src={image}
                           alt={`${product.name} - Miniatura ${index + 1}`}
                           width={64}
@@ -415,7 +464,7 @@ const ProductPage = () => {
                 <Link href={`/produto/${relatedProduct.handle}`}>
                   <div className="aspect-square bg-gray-50 overflow-hidden relative">
                     {relatedProduct.image ? (
-                      <Image
+                      <OptimizedImage
                         src={relatedProduct.image}
                         alt={relatedProduct.name}
                         fill
