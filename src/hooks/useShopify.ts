@@ -39,6 +39,19 @@ export interface Product {
   vendor?: string;
   productType?: string;
   totalInventory?: number;
+  collections?: Array<{
+    id: string;
+    handle: string;
+    title: string;
+  }>;
+  metafields?: Array<{
+    id: string;
+    namespace: string;
+    key: string;
+    value: string;
+    type: string;
+    description?: string;
+  }>;
 }
 
 export interface ProductsResponse {
@@ -294,7 +307,11 @@ export function useCollectionProducts(
   return { data, loading, error };
 }
 
-export const useRelatedProducts = (productId: string, limit: number = 4) => {
+export const useRelatedProducts = (
+  productId: string,
+  limit: number = 4,
+  collections?: Array<{ id: string; handle: string; title: string }>
+) => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -310,8 +327,16 @@ export const useRelatedProducts = (productId: string, limit: number = 4) => {
         setLoading(true);
         setError(null);
 
+        const params = new URLSearchParams();
+        params.append("productId", productId);
+        params.append("limit", limit.toString());
+
+        if (collections && collections.length > 0) {
+          params.append("collections", JSON.stringify(collections));
+        }
+
         const response = await fetch(
-          `/api/products?limit=${limit}&exclude=${productId}`
+          `/api/products/related?${params.toString()}`
         );
 
         if (!response.ok) {
@@ -319,7 +344,7 @@ export const useRelatedProducts = (productId: string, limit: number = 4) => {
         }
 
         const result = await response.json();
-        setData(result.products || []);
+        setData(result || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -328,7 +353,7 @@ export const useRelatedProducts = (productId: string, limit: number = 4) => {
     };
 
     fetchRelatedProducts();
-  }, [productId, limit]);
+  }, [productId, limit, collections]);
 
   return { data, loading, error };
 };

@@ -203,10 +203,12 @@ const CartSidebar = ({
                         }
                         disabled={
                           item.quantityAvailable !== undefined &&
+                          item.quantityAvailable > 0 &&
                           item.quantity >= item.quantityAvailable
                         }
                         className={`w-8 h-8 flex items-center justify-center border-2 rounded-lg transition-colors duration-200 ${
                           item.quantityAvailable !== undefined &&
+                          item.quantityAvailable > 0 &&
                           item.quantity >= item.quantityAvailable
                             ? "border-gray-200 text-gray-300 cursor-not-allowed"
                             : "border-gray-400 text-gray-700 hover:bg-gray-100 hover:border-gray-600 cursor-pointer"

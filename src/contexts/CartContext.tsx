@@ -139,12 +139,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           totalPrice: prevCart.totalPrice - item.price * item.quantity,
         };
       } else {
-        // Check stock limit - only apply if availableStock > 0
+        // Check stock limit - only apply if availableStock > 0 and trying to exceed it
+        // If availableStock is 0 but product is available for sale, allow unlimited quantity
         const availableStock = item.quantityAvailable || 0;
         let actualQuantity = quantity;
 
-        if (availableStock > 0) {
-          actualQuantity = Math.min(quantity, availableStock);
+        if (availableStock > 0 && quantity > availableStock) {
+          actualQuantity = availableStock;
         }
 
         // Update quantity

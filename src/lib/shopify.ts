@@ -126,6 +126,17 @@ export const PRODUCT_BY_HANDLE_QUERY = `
       availableForSale
       createdAt
       updatedAt
+      collections(first: 10) {
+        edges {
+          node {
+            id
+            handle
+            title
+          }
+        }
+      }
+
+
       priceRange {
         minVariantPrice {
           amount
@@ -210,6 +221,15 @@ export interface ShopifyProduct {
   availableForSale: boolean;
   createdAt: string;
   updatedAt: string;
+  collections: {
+    edges: Array<{
+      node: {
+        id: string;
+        handle: string;
+        title: string;
+      };
+    }>;
+  };
   priceRange: {
     minVariantPrice: {
       amount: string;
@@ -276,4 +296,17 @@ export interface ShopifyProduct {
     name: string;
     values: string[];
   }>;
+  metafields: {
+    edges: Array<{
+      node: {
+        id: string;
+        namespace: string;
+        key: string;
+        value: string;
+        type: string;
+        description: string;
+        createdAt: string;
+      };
+    }>;
+  };
 }

@@ -19,19 +19,31 @@ const ProductPage = () => {
   // Fetch related products
   const { data: relatedProducts, loading: relatedLoading } = useRelatedProducts(
     product?.id || "",
-    4
+    8,
+    product?.collections
   );
 
-  // Debug: Log inventory data
+  // Debug: Log product and collection data
+  React.useEffect(() => {
+    if (product) {
+      console.log("Current product:", {
+        id: product.id,
+        name: product.name,
+        collections: product.collections,
+      });
+    }
+  }, [product]);
+
+  // Debug: Log related products
   React.useEffect(() => {
     if (relatedProducts && relatedProducts.length > 0) {
       console.log(
-        "Related products inventory:",
+        "Related products:",
         relatedProducts.map((p) => ({
+          id: p.id,
           name: p.name,
           availableForSale: p.availableForSale,
           totalInventory: p.totalInventory,
-          type: typeof p.totalInventory,
         }))
       );
     }
@@ -98,17 +110,13 @@ const ProductPage = () => {
                   ))}
                 </div>
               </div>
-
-              {/* Content skeleton */}
-              <div className="space-y-6">
-                <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
-                <div className="h-6 bg-gray-200 rounded w-24 animate-pulse"></div>
-                <div className="space-y-2">
-                  <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                  <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
-                  <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse"></div>
-                </div>
-                <div className="h-12 bg-gray-200 rounded animate-pulse"></div>
+              {/* Product Info skeleton */}
+              <div className="space-y-4">
+                <div className="h-8 bg-gray-200 rounded w-1/2 mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/3 mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded w-2/3 mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/3 mb-2"></div>
               </div>
             </div>
           </div>
@@ -278,6 +286,64 @@ const ProductPage = () => {
                       : "Indisponível"}
                   </span>
                 </div>
+
+                {/* Metafields */}
+                {product.metafields && product.metafields.length > 0 && (
+                  <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                      Especificações
+                    </h3>
+                    <div className="space-y-2">
+                      {product.metafields.map((mf) => {
+                        // Format the key for display in Portuguese
+                        const keyTranslations: { [key: string]: string } = {
+                          "color-pattern": "Cor",
+                          "tool-utensil-material": "Material",
+                          "food-storage-material": "Material de Armazenamento",
+                          shape: "Forma",
+                          color: "Cor",
+                          forma: "Forma",
+                          material: "Material",
+                          tamanho: "Tamanho",
+                          peso: "Peso",
+                          dimensoes: "Dimensões",
+                          capacidade: "Capacidade",
+                          volume: "Volume",
+                          altura: "Altura",
+                          largura: "Largura",
+                          profundidade: "Profundidade",
+                          diametro: "Diâmetro",
+                          comprimento: "Comprimento",
+                        };
+
+                        const displayKey =
+                          keyTranslations[mf.key] ||
+                          mf.key
+                            .replace(/([A-Z])/g, " $1") // Add space before capital letters
+                            .replace(/^./, (str) => str.toUpperCase()) // Capitalize first letter
+                            .replace(/-/g, " ") // Replace hyphens with spaces
+                            .replace(/_/g, " "); // Replace underscores with spaces
+
+                        // The value is now already resolved from metaobjects
+                        const displayValue = mf.value;
+
+                        return (
+                          <div
+                            key={mf.key}
+                            className="flex justify-between text-sm"
+                          >
+                            <span className="font-medium text-gray-700">
+                              {displayKey}:
+                            </span>
+                            <span className="text-gray-900">
+                              {displayValue}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
                 {/* Description */}
                 {product.description && (
