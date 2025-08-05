@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TupperStock - Tupperware Stock Premium",
+  title: "TupperStock - Tupperware Stock Açores",
   description:
     "TupperStock - Loja online especializada em stock de Tupperware premium. Recipientes de armazenamento de alimentos de alta qualidade, frescos por mais tempo. Entrega em Portugal e Açores.",
   keywords: [
@@ -46,8 +46,7 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title:
-      "TupperStock - Tupperware Stock Premium | Recipientes de Armazenamento",
+    title: "TupperStock - Tupperware Stock Açores",
     description:
       "TupperStock - Loja online especializada em stock de Tupperware premium. Recipientes de armazenamento de alimentos de alta qualidade, frescos por mais tempo.",
     url: "https://tupperstock.com",
@@ -59,13 +58,13 @@ export const metadata: Metadata = {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "TupperStock - Tupperware Stock Premium",
+        alt: "TupperStock - Tupperware Stock Açores",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "TupperStock - Tupperware Stock Premium",
+    title: "TupperStock - Tupperware Stock Açores",
     description:
       "Loja online especializada em stock de Tupperware premium. Recipientes de armazenamento de alimentos de alta qualidade.",
     images: ["/og-image.jpg"],
