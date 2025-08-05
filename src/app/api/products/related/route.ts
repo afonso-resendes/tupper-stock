@@ -278,7 +278,7 @@ export async function GET(request: NextRequest) {
           } catch (error) {
             console.error(
               `Error fetching collection ${collection.handle}:`,
-              error.message
+              error instanceof Error ? error.message : error
             );
           }
         }
