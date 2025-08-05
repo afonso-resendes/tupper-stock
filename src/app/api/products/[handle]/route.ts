@@ -28,7 +28,7 @@ export async function GET(
     const transformedProduct = {
       id: product.id,
       name: product.title,
-      description: product.description,
+      description: product.descriptionHtml || product.description,
       price: parseFloat(product.priceRange.minVariantPrice.amount),
       originalPrice: product.compareAtPriceRange?.minVariantPrice?.amount
         ? parseFloat(product.compareAtPriceRange.minVariantPrice.amount)

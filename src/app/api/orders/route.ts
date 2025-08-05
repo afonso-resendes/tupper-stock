@@ -27,6 +27,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get Shopify configuration
+    const shopifyDomain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
+    const accessToken = process.env.SHOPIFY_ACCESS_TOKEN;
+
+    if (!shopifyDomain || !accessToken) {
+      console.error("Missing Shopify configuration:", {
+        shopifyDomain,
+        accessToken: accessToken ? "present" : "missing",
+      });
+      return NextResponse.json(
+        { error: "Shopify configuration missing" },
+        { status: 500 }
+      );
+    }
+
+    const cleanDomain = shopifyDomain.replace(".myshopify.com", "");
+
     // Helper function to extract numeric ID from GraphQL ID
     const extractNumericId = (graphqlId: string) => {
       // Extract the numeric part from GraphQL ID like "gid://shopify/ProductVariant/56327039746432"
@@ -55,6 +72,57 @@ export async function POST(request: NextRequest) {
     }));
 
     console.log("Prepared line items:", JSON.stringify(lineItems, null, 2));
+
+    // Validate inventory before creating order
+    console.log("Validating inventory levels...");
+
+    for (const lineItem of lineItems) {
+      // Skip delivery fee product (it's not a real inventory item)
+      if (lineItem.variant_id === "15259729035648") {
+        continue;
+      }
+
+      const variantId = lineItem.variant_id;
+      const requestedQuantity = lineItem.quantity;
+
+      // Get current inventory level
+      const inventoryUrl = `https://${cleanDomain}.myshopify.com/admin/api/2025-01/variants/${variantId}.json`;
+      const variantResponse = await fetch(inventoryUrl, {
+        method: "GET",
+        headers: {
+          "X-Shopify-Access-Token": accessToken,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (variantResponse.ok) {
+        const variantData = await variantResponse.json();
+        const currentInventory = variantData.variant.inventory_quantity || 0;
+
+        if (currentInventory < requestedQuantity) {
+          console.error(
+            `Insufficient inventory for variant ${variantId}: requested ${requestedQuantity}, available ${currentInventory}`
+          );
+          return NextResponse.json(
+            {
+              error: `Produto "${variantData.variant.title}" não tem stock suficiente. Disponível: ${currentInventory}, Solicitado: ${requestedQuantity}`,
+              variantId,
+              requestedQuantity,
+              availableQuantity: currentInventory,
+            },
+            { status: 400 }
+          );
+        }
+      } else {
+        console.error(`Failed to get inventory for variant ${variantId}`);
+        return NextResponse.json(
+          { error: "Erro ao verificar stock do produto" },
+          { status: 500 }
+        );
+      }
+    }
+
+    console.log("Inventory validation passed");
 
     // Calculate total - delivery fee will be added as a product, so we use the original total
     const finalTotal = totalPrice;
@@ -132,22 +200,6 @@ ${deliveryOption === "delivery" ? `Taxa de entrega: 5,00€` : ""}`,
     // Create order using Shopify REST API instead of GraphQL
     console.log("Attempting to create order using REST API...");
 
-    const shopifyDomain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
-    const accessToken = process.env.SHOPIFY_ACCESS_TOKEN;
-
-    if (!shopifyDomain || !accessToken) {
-      console.error("Missing Shopify configuration:", {
-        shopifyDomain,
-        accessToken: accessToken ? "present" : "missing",
-      });
-      return NextResponse.json(
-        { error: "Shopify configuration missing" },
-        { status: 500 }
-      );
-    }
-
-    // Remove .myshopify.com if it's already in the domain
-    const cleanDomain = shopifyDomain.replace(".myshopify.com", "");
     const restApiUrl = `https://${cleanDomain}.myshopify.com/admin/api/2025-01/orders.json`;
 
     // Add delivery fee product if delivery option is selected
@@ -450,6 +502,79 @@ ${deliveryOption === "delivery" ? `Taxa de entrega: 5,00€` : ""}`,
     let customerDetails = order.customer;
     if (existingCustomer && !order.customer) {
       customerDetails = existingCustomer;
+    }
+
+    // Decrement inventory for all items in the order
+    try {
+      console.log("Decrementing inventory for order items...");
+
+      for (const lineItem of lineItems) {
+        // Skip delivery fee product (it's not a real inventory item)
+        if (lineItem.variant_id === "15259729035648") {
+          continue;
+        }
+
+        const variantId = lineItem.variant_id;
+        const quantity = lineItem.quantity;
+
+        console.log(`Decrementing ${quantity} from variant ${variantId}`);
+
+        // Get current inventory level
+        const inventoryUrl = `https://${cleanDomain}.myshopify.com/admin/api/2025-01/variants/${variantId}.json`;
+        const variantResponse = await fetch(inventoryUrl, {
+          method: "GET",
+          headers: {
+            "X-Shopify-Access-Token": accessToken,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (variantResponse.ok) {
+          const variantData = await variantResponse.json();
+          const currentInventory = variantData.variant.inventory_quantity || 0;
+          const inventoryItemId = variantData.variant.inventory_item_id;
+          const newInventory = Math.max(0, currentInventory - quantity);
+
+          console.log(
+            `Variant ${variantId}: ${currentInventory} -> ${newInventory}`
+          );
+
+          // Update inventory level using inventory levels API
+          const updateInventoryUrl = `https://${cleanDomain}.myshopify.com/admin/api/2025-01/inventory_levels/set.json`;
+          const updateResponse = await fetch(updateInventoryUrl, {
+            method: "POST",
+            headers: {
+              "X-Shopify-Access-Token": accessToken,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              location_id: 108441469312, // Your store location ID
+              inventory_item_id: inventoryItemId,
+              available: newInventory,
+            }),
+          });
+
+          if (updateResponse.ok) {
+            console.log(
+              `Successfully updated inventory for variant ${variantId}`
+            );
+          } else {
+            console.error(
+              `Failed to update inventory for variant ${variantId}:`,
+              await updateResponse.text()
+            );
+          }
+        } else {
+          console.error(
+            `Failed to get variant ${variantId} details:`,
+            await variantResponse.text()
+          );
+        }
+      }
+    } catch (inventoryError) {
+      console.error("Error updating inventory:", inventoryError);
+      // Don't fail the order creation if inventory update fails
+      // The order is already created successfully
     }
 
     return NextResponse.json({

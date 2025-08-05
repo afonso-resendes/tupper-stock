@@ -69,6 +69,7 @@ const ProductPage = () => {
           image:
             (product.images && product.images[selectedImage]) || product.image,
           variantId: selectedVariant.id,
+          quantityAvailable: selectedVariant.quantityAvailable,
         });
       }
 
@@ -281,7 +282,9 @@ const ProductPage = () => {
                 {/* Description */}
                 {product.description && (
                   <div className="prose prose-sm text-gray-600">
-                    <p>{product.description}</p>
+                    <div
+                      dangerouslySetInnerHTML={{ __html: product.description }}
+                    />
                   </div>
                 )}
 
@@ -448,9 +451,12 @@ const ProductPage = () => {
                         {relatedProduct.name}
                       </h3>
                     </Link>
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-3 flex-1">
-                      {relatedProduct.description}
-                    </p>
+                    <div
+                      className="text-sm text-gray-600 mb-4 line-clamp-3 flex-1"
+                      dangerouslySetInnerHTML={{
+                        __html: relatedProduct.description,
+                      }}
+                    />
                   </div>
 
                   <div className="space-y-3">
@@ -499,6 +505,8 @@ const ProductPage = () => {
                           price: relatedProduct.price,
                           image: relatedProduct.image,
                           variantId: relatedProduct.variants?.[0]?.id,
+                          quantityAvailable:
+                            relatedProduct.variants?.[0]?.quantityAvailable,
                         });
                         openCartSidebar();
                       }}

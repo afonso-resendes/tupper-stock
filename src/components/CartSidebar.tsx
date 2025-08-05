@@ -9,6 +9,7 @@ interface CartItem {
   quantity: number;
   image: string | null;
   variantId: string;
+  quantityAvailable?: number;
 }
 
 interface CartSidebarProps {
@@ -180,10 +181,19 @@ const CartSidebar = ({
                         onClick={() =>
                           onUpdateQuantity(item.variantId, item.quantity + 1)
                         }
-                        className="w-8 h-8 flex items-center justify-center border-2 border-gray-400 rounded-lg hover:bg-gray-100 hover:border-gray-600 transition-colors duration-200 cursor-pointer"
+                        disabled={
+                          item.quantityAvailable !== undefined &&
+                          item.quantity >= item.quantityAvailable
+                        }
+                        className={`w-8 h-8 flex items-center justify-center border-2 rounded-lg transition-colors duration-200 ${
+                          item.quantityAvailable !== undefined &&
+                          item.quantity >= item.quantityAvailable
+                            ? "border-gray-200 text-gray-300 cursor-not-allowed"
+                            : "border-gray-400 text-gray-700 hover:bg-gray-100 hover:border-gray-600 cursor-pointer"
+                        }`}
                       >
                         <svg
-                          className="w-4 h-4 text-gray-700"
+                          className="w-4 h-4"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"

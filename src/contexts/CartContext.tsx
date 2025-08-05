@@ -8,6 +8,7 @@ interface CartItem {
   quantity: number;
   image: string | null;
   variantId: string;
+  quantityAvailable?: number;
 }
 
 interface Cart {
@@ -26,6 +27,7 @@ interface CartContextType {
     price: number;
     image: string | null;
     variantId: string;
+    quantityAvailable?: number;
   }) => Promise<void>;
   updateQuantity: (variantId: string, quantity: number) => void;
   removeFromCart: (variantId: string) => void;
@@ -68,6 +70,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     price: number;
     image: string | null;
     variantId: string;
+    quantityAvailable?: number;
   }) => {
     setLoading(true);
     try {
@@ -76,11 +79,26 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           (item) => item.variantId === product.variantId
         );
 
+        // Check if we can add more of this item
+        const currentQuantity = existingItem ? existingItem.quantity : 0;
+        const availableStock = product.quantityAvailable || 0;
+
+        // Allow adding to cart even if out of stock, but limit to available stock
+        if (availableStock > 0 && currentQuantity >= availableStock) {
+          // Cannot add more - stock limit reached
+          return prevCart;
+        }
+
         if (existingItem) {
           // Update quantity if item already exists
           const updatedItems = prevCart.items.map((item) =>
             item.variantId === product.variantId
-              ? { ...item, quantity: item.quantity + 1 }
+              ? {
+                  ...item,
+                  quantity: item.quantity + 1,
+                  quantityAvailable:
+                    product.quantityAvailable || item.quantityAvailable,
+                }
               : item
           );
           return {
@@ -110,35 +128,35 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const updateQuantity = (variantId: string, quantity: number) => {
     setCart((prevCart) => {
+      const item = prevCart.items.find((item) => item.variantId === variantId);
+      if (!item) return prevCart;
+
       if (quantity === 0) {
         // Remove item
-        const itemToRemove = prevCart.items.find(
-          (item) => item.variantId === variantId
-        );
-        if (!itemToRemove) return prevCart;
-
         return {
           items: prevCart.items.filter((item) => item.variantId !== variantId),
-          totalItems: prevCart.totalItems - itemToRemove.quantity,
-          totalPrice:
-            prevCart.totalPrice - itemToRemove.price * itemToRemove.quantity,
+          totalItems: prevCart.totalItems - item.quantity,
+          totalPrice: prevCart.totalPrice - item.price * item.quantity,
         };
       } else {
+        // Check stock limit - only apply if availableStock > 0
+        const availableStock = item.quantityAvailable || 0;
+        let actualQuantity = quantity;
+
+        if (availableStock > 0) {
+          actualQuantity = Math.min(quantity, availableStock);
+        }
+
         // Update quantity
         const updatedItems = prevCart.items.map((item) => {
           if (item.variantId === variantId) {
-            const quantityDiff = quantity - item.quantity;
-            return { ...item, quantity };
+            const quantityDiff = actualQuantity - item.quantity;
+            return { ...item, quantity: actualQuantity };
           }
           return item;
         });
 
-        const item = prevCart.items.find(
-          (item) => item.variantId === variantId
-        );
-        if (!item) return prevCart;
-
-        const quantityDiff = quantity - item.quantity;
+        const quantityDiff = actualQuantity - item.quantity;
 
         return {
           items: updatedItems,

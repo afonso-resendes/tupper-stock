@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     let transformedProducts = products.map(({ node: product }: any) => ({
       id: product.id,
       name: product.title,
-      description: product.description,
+      description: product.descriptionHtml || product.description,
       price: parseFloat(product.priceRange.minVariantPrice.amount),
       originalPrice: product.compareAtPriceRange?.minVariantPrice?.amount
         ? parseFloat(product.compareAtPriceRange.minVariantPrice.amount)

@@ -46,6 +46,7 @@ const ProductShowcase = () => {
         price: product.price,
         image: product.image,
         variantId: variant.id,
+        quantityAvailable: variant.quantityAvailable,
       });
 
       // Auto-open the cart sidebar
@@ -134,9 +135,10 @@ const ProductShowcase = () => {
                     <h3 className="text-base font-medium text-gray-900 mb-2 group-hover:text-gray-700 transition-colors line-clamp-2 min-h-[2.5rem]">
                       {product.name}
                     </h3>
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-3 flex-1">
-                      {product.description}
-                    </p>
+                    <div
+                      className="text-sm text-gray-600 mb-4 line-clamp-3 flex-1"
+                      dangerouslySetInnerHTML={{ __html: product.description }}
+                    />
                   </div>
                 </Link>
 

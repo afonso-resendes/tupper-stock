@@ -91,6 +91,8 @@ const CheckoutPage = () => {
       }
 
       if (result.success) {
+        // Clear the cart after successful order
+        clearCart();
         // Redirect to thank you page with order number
         router.push(`/thankyou?order=${result.order.name}`);
       } else {
