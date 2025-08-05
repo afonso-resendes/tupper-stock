@@ -54,7 +54,6 @@ const CartSidebar = ({
         }`}
         style={{
           top: "0",
-          height: "100vh",
           height: "100dvh",
           paddingTop: "env(safe-area-inset-top)",
           paddingBottom: "env(safe-area-inset-bottom)",
