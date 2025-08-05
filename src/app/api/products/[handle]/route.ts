@@ -52,6 +52,8 @@ export async function GET(
       vendor: product.vendor,
       productType: product.productType,
       totalInventory: product.totalInventory,
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt,
     };
 
     return NextResponse.json(transformedProduct);

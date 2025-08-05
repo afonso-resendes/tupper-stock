@@ -31,25 +31,46 @@ const CartSidebar = ({
 }: CartSidebarProps) => {
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
+  // Prevent body scroll when sidebar is open
+  React.useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    // Cleanup function to restore scroll when component unmounts
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+
   return (
     <>
       {/* Cart Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed right-0 w-full sm:w-96 bg-white shadow-xl z-[9999] transform transition-transform duration-300 ease-in-out flex flex-col ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
+        style={{
+          top: "0",
+          height: "100vh",
+          height: "100dvh",
+          paddingTop: "env(safe-area-inset-top)",
+          paddingBottom: "env(safe-area-inset-bottom)",
+        }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-lg font-medium text-gray-900">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 flex-shrink-0">
+          <h2 className="text-base sm:text-lg font-medium text-gray-900">
             Carrinho de Compras ({totalItems})
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors duration-200 cursor-pointer"
+            className="text-gray-400 hover:text-gray-600 transition-colors duration-200 cursor-pointer p-1"
           >
             <svg
-              className="w-6 h-6"
+              className="w-5 h-5 sm:w-6 sm:h-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -64,8 +85,8 @@ const CartSidebar = ({
           </button>
         </div>
 
-        {/* Cart Items */}
-        <div className="flex-1 overflow-y-auto p-6">
+        {/* Cart Items - Scrollable Area */}
+        <div className="flex-1 overflow-y-auto p-3 sm:p-6">
           {items.length === 0 ? (
             <div className="text-center py-12">
               <svg
@@ -94,12 +115,12 @@ const CartSidebar = ({
               {items.map((item) => (
                 <div
                   key={item.variantId}
-                  className="flex flex-col space-y-3 p-4 border border-gray-100 rounded-lg"
+                  className="flex flex-col space-y-2 sm:space-y-3 p-3 sm:p-4 border border-gray-100 rounded-lg"
                 >
                   {/* Product Image and Title Row */}
                   <div className="flex items-start space-x-4">
                     {/* Product Image */}
-                    <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
                       {item.image ? (
                         <img
                           src={item.image}
@@ -219,26 +240,28 @@ const CartSidebar = ({
           )}
         </div>
 
-        {/* Footer */}
+        {/* Footer - Fixed at Bottom */}
         {items.length > 0 && (
-          <div className="border-t border-gray-200 p-6">
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-lg font-medium text-gray-900">Total:</span>
-              <span className="text-lg font-medium text-gray-900">
+          <div className="border-t border-gray-200 p-4 sm:p-6 bg-white flex-shrink-0">
+            <div className="flex justify-between items-center mb-3 sm:mb-4">
+              <span className="text-base sm:text-lg font-medium text-gray-900">
+                Total:
+              </span>
+              <span className="text-base sm:text-lg font-medium text-gray-900">
                 {totalPrice.toFixed(2)}€
               </span>
             </div>
             <Link href="/checkout">
               <button
                 onClick={onClose}
-                className="w-full bg-black text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors duration-200 font-medium cursor-pointer"
+                className="w-full bg-black text-white py-2.5 sm:py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors duration-200 font-medium cursor-pointer text-sm sm:text-base"
               >
                 Finalizar Compra
               </button>
             </Link>
             <button
               onClick={onClose}
-              className="w-full mt-3 text-gray-600 hover:text-gray-900 transition-colors duration-200 font-medium cursor-pointer"
+              className="w-full mt-2 sm:mt-3 text-gray-600 hover:text-gray-900 transition-colors duration-200 font-medium cursor-pointer text-sm sm:text-base py-1"
             >
               Continuar a Comprar
             </button>

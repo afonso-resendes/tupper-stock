@@ -55,6 +55,8 @@ export async function GET(request: NextRequest) {
       vendor: product.vendor,
       productType: product.productType,
       totalInventory: product.totalInventory,
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt,
     }));
 
     // Filter by category if specified

@@ -102,7 +102,9 @@ const ProductsPageContent = () => {
       case "name":
         return a.name.localeCompare(b.name);
       case "newest":
-        return new Date(b.id).getTime() - new Date(a.id).getTime();
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
       default:
         return 0;
     }
@@ -169,14 +171,14 @@ const ProductsPageContent = () => {
 
       <div className="max-w-6xl mx-auto px-4 py-4 sm:py-8">
         {/* Filters and Sort */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 sm:mb-8 space-y-4 md:space-y-0">
+        <div className="flex flex-col space-y-4 mb-6 sm:mb-8">
           {/* Categories */}
-          <div className="w-full overflow-x-auto">
-            <div className="flex gap-2 min-w-max pb-2">
+          <div className="w-full">
+            <div className="flex flex-nowrap overflow-x-auto gap-2 lg:flex-wrap lg:overflow-visible pb-2 lg:pb-0">
               {/* All Products button */}
               <button
                 onClick={() => setSelectedCategory("all")}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 whitespace-nowrap ${
+                className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200 whitespace-nowrap flex-shrink-0 ${
                   selectedCategory === "all"
                     ? "bg-black text-white shadow-md"
                     : "bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-900"
@@ -191,14 +193,14 @@ const ProductsPageContent = () => {
                   Array.from({ length: 4 }).map((_, index) => (
                     <div
                       key={index}
-                      className="w-20 h-8 bg-gray-200 rounded-lg animate-pulse flex-shrink-0"
+                      className="w-16 sm:w-20 h-8 bg-gray-200 rounded-lg animate-pulse flex-shrink-0"
                     ></div>
                   ))
                 : categories.map((category) => (
                     <button
                       key={category.title}
                       onClick={() => setSelectedCategory(category.title)}
-                      className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 whitespace-nowrap flex-shrink-0 ${
+                      className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors duration-200 whitespace-nowrap flex-shrink-0 ${
                         selectedCategory === category.title
                           ? "bg-black text-white shadow-md"
                           : "bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-900"
@@ -211,14 +213,14 @@ const ProductsPageContent = () => {
           </div>
 
           {/* Sort */}
-          <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
-            <span className="text-sm font-medium text-gray-700">
+          <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto self-start">
+            <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
               Ordenar por:
             </span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full sm:w-auto px-4 py-3 sm:py-2 text-sm border-2 border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black font-medium text-gray-700 hover:border-gray-400 transition-colors duration-200"
+              className="w-full sm:w-auto px-3 sm:px-4 py-2 text-sm border-2 border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black font-medium text-gray-700 hover:border-gray-400 transition-colors duration-200"
             >
               {sortOptions.map((option) => (
                 <option key={option.id} value={option.id}>

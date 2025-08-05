@@ -37,6 +37,8 @@ export const PRODUCTS_QUERY = `
           tags
           totalInventory
           availableForSale
+          createdAt
+          updatedAt
           priceRange {
             minVariantPrice {
               amount
@@ -122,6 +124,8 @@ export const PRODUCT_BY_HANDLE_QUERY = `
       tags
       totalInventory
       availableForSale
+      createdAt
+      updatedAt
       priceRange {
         minVariantPrice {
           amount
@@ -204,6 +208,8 @@ export interface ShopifyProduct {
   tags: string[];
   totalInventory: number;
   availableForSale: boolean;
+  createdAt: string;
+  updatedAt: string;
   priceRange: {
     minVariantPrice: {
       amount: string;
