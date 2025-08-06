@@ -8,8 +8,7 @@ import JoinUs from "../../components/JoinUs";
 import Footer from "../../components/Footer";
 
 export const metadata: Metadata = {
-  title:
-    "TupperStock - Tupperware Stock Premium | Recipientes de Armazenamento",
+  title: "TupperStock - Tupperware Stock Açores | Comprar Online",
   description:
     "TupperStock - Loja online especializada em stock de Tupperware premium. Recipientes de armazenamento de alimentos de alta qualidade, frescos por mais tempo. Entrega em Portugal e Açores.",
   keywords: [
@@ -30,8 +29,7 @@ export const metadata: Metadata = {
     "tupper stock portugal",
   ],
   openGraph: {
-    title:
-      "TupperStock - Tupperware Stock Premium | Recipientes de Armazenamento",
+    title: "TupperStock - Tupperware Stock Açores | Comprar Online",
     description:
       "TupperStock - Loja online especializada em stock de Tupperware premium. Recipientes de armazenamento de alimentos de alta qualidade, frescos por mais tempo.",
     url: "https://tupperstock.com",
