@@ -9,6 +9,7 @@ type DeliveryOption = "pickup" | "delivery";
 const CheckoutPage = () => {
   const { cart, clearCart, isInitialized } = useCart();
   const router = useRouter();
+
   const [deliveryOption, setDeliveryOption] = useState<DeliveryOption | null>(
     null
   );
@@ -91,10 +92,14 @@ const CheckoutPage = () => {
       }
 
       if (result.success) {
-        // Clear the cart after successful order
-        clearCart();
-        // Redirect to thank you page with order number
-        router.push(`/thankyou?order=${result.order.name}`);
+        // Redirect to thank you page with order number first
+        const redirectUrl = `/thankyou?order=${result.order.name}`;
+        router.push(redirectUrl);
+
+        // Clear the cart after a short delay to ensure redirect happens
+        setTimeout(() => {
+          clearCart();
+        }, 1000);
       } else {
         throw new Error("Failed to create order");
       }
@@ -125,7 +130,8 @@ const CheckoutPage = () => {
     );
   }
 
-  if (cart.items.length === 0) {
+  // Show empty cart message only if cart is initialized and actually empty
+  if (isInitialized && cart.items.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 py-8">
@@ -324,61 +330,15 @@ const CheckoutPage = () => {
                     <h3 className="text-xl font-medium text-gray-900 mb-6">
                       Levantamento Local
                     </h3>
-                    <div className="bg-gray-50 p-6 rounded-lg mb-8">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <p className="text-base text-gray-700">
-                            <strong>Endereço:</strong>
-                            <br />
-                            Rua Agostinho Cymbron 3, Fajã de Baixo
-                            <br />
-                            9500-445 Ponta Delgada
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => {
-                            const address =
-                              "Rua Agostinho Cymbron 3, Fajã de Baixo, 9500-445 Ponta Delgada";
-                            navigator.clipboard
-                              .writeText(address)
-                              .then(() => {
-                                // Optional: Show a brief success message
-                                const button =
-                                  document.activeElement as HTMLButtonElement;
-                                const originalHTML = button.innerHTML;
-                                button.innerHTML = `
-                                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                  </svg>
-                                `;
-                                button.classList.add("bg-gray-600");
-                                setTimeout(() => {
-                                  button.innerHTML = originalHTML;
-                                  button.classList.remove("bg-gray-600");
-                                }, 2000);
-                              })
-                              .catch((err) => {
-                                console.error("Failed to copy address: ", err);
-                              });
-                          }}
-                          type="button"
-                          className="ml-4 p-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 flex-shrink-0"
-                          title="Copiar endereço"
-                        >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                            />
-                          </svg>
-                        </button>
+                    <div className="bg-gray-50 p-4 sm:p-6 rounded-lg mb-8">
+                      <div className="flex-1">
+                        <p className="text-sm sm:text-base text-gray-700">
+                          <strong>Endereço:</strong>
+                          <br />
+                          Rua Agostinho Cymbron 3, Fajã de Baixo
+                          <br />
+                          9500-445 Ponta Delgada
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -430,28 +390,28 @@ const CheckoutPage = () => {
                       />
                     </div>
                     {/* Pickup Hours Disclaimer */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                      <h4 className="text-base font-medium text-blue-900 mb-2">
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+                      <h4 className="text-base font-medium text-gray-900 mb-2">
                         Horário de Levantamento
                       </h4>
-                      <p className="text-sm text-blue-800">
+                      <p className="text-sm text-gray-700">
                         <strong>
                           Segunda a sexta, das 17:00 às 20:00, com marcação.
                         </strong>
                       </p>
-                      <p className="text-sm text-blue-800 mt-2">
+                      <p className="text-sm text-gray-700 mt-2">
                         Pode entrar em contacto connosco, caso contrário iremos
                         entrar em contacto consigo.
                       </p>
-                      <div className="flex items-center space-x-2 mt-3 pt-3 border-t border-blue-200">
+                      <div className="flex items-center space-x-2 mt-3 pt-3 border-t border-gray-200">
                         <svg
-                          className="w-4 h-4 text-blue-600"
+                          className="w-4 h-4 text-gray-600"
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
                           <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                         </svg>
-                        <span className="text-sm font-medium text-blue-900">
+                        <span className="text-sm font-medium text-gray-900">
                           917 391 005
                         </span>
                       </div>
@@ -468,11 +428,11 @@ const CheckoutPage = () => {
                   )}
 
                   {/* Payment and Delivery Terms Notice */}
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-                    <h4 className="text-base font-medium text-blue-900 mb-3">
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
+                    <h4 className="text-base font-medium text-gray-900 mb-3">
                       Termos de Pagamento e Entrega
                     </h4>
-                    <div className="space-y-2 text-sm text-blue-800">
+                    <div className="space-y-2 text-sm text-gray-700">
                       <p>
                         <strong>Pagamento:</strong> O pagamento é efetuado no
                         ato da entrega.
@@ -496,9 +456,20 @@ const CheckoutPage = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-black text-white py-4 px-6 rounded-lg hover:bg-gray-800 transition-colors duration-200 font-medium text-lg mt-8 disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
+                    className="w-full bg-black text-white py-4 px-4 sm:px-6 rounded-lg hover:bg-gray-800 transition-colors duration-200 font-medium text-base sm:text-lg mt-8 disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center min-h-[56px]"
                   >
-                    {isSubmitting ? "A processar..." : "Finalizar Pedido"}
+                    {isSubmitting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2 sm:mr-3"></div>
+                        <span className="text-sm sm:text-base">
+                          A processar encomenda...
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-sm sm:text-base">
+                        Finalizar Pedido
+                      </span>
+                    )}
                   </button>
                 </form>
               )}
@@ -670,11 +641,11 @@ const CheckoutPage = () => {
                     )}
 
                     {/* Payment and Delivery Terms Notice */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-                      <h4 className="text-base font-medium text-blue-900 mb-3">
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
+                      <h4 className="text-base font-medium text-gray-900 mb-3">
                         Termos de Pagamento e Entrega
                       </h4>
-                      <div className="space-y-2 text-sm text-blue-800">
+                      <div className="space-y-2 text-sm text-gray-700">
                         <p>
                           <strong>Pagamento:</strong> O pagamento é efetuado no
                           ato da entrega.
@@ -700,9 +671,20 @@ const CheckoutPage = () => {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full bg-black text-white py-4 px-6 rounded-lg hover:bg-gray-800 transition-colors duration-200 font-medium text-lg mt-8 disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
+                        className="w-full bg-black text-white py-4 px-4 sm:px-6 rounded-lg hover:bg-gray-800 transition-colors duration-200 font-medium text-base sm:text-lg mt-8 disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center min-h-[56px]"
                       >
-                        {isSubmitting ? "A processar..." : "Finalizar Pedido"}
+                        {isSubmitting ? (
+                          <>
+                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2 sm:mr-3"></div>
+                            <span className="text-sm sm:text-base">
+                              A processar encomenda...
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-sm sm:text-base">
+                            Finalizar Pedido
+                          </span>
+                        )}
                       </button>
                     )}
                   </div>

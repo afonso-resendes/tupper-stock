@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminClient } from "@/lib/shopify";
+import { sendOrderConfirmationEmail } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
   try {
@@ -97,20 +98,33 @@ export async function POST(request: NextRequest) {
 
       if (variantResponse.ok) {
         const variantData = await variantResponse.json();
-        const currentInventory = variantData.variant.inventory_quantity || 0;
+        const variant = variantData.variant;
+        const inventoryTracking = variant.inventory_management; // null if not tracking, 'shopify' if tracking
+        const currentInventory = variant.inventory_quantity || 0;
 
-        if (currentInventory < requestedQuantity) {
-          console.error(
-            `Insufficient inventory for variant ${variantId}: requested ${requestedQuantity}, available ${currentInventory}`
-          );
-          return NextResponse.json(
-            {
-              error: `Produto "${variantData.variant.title}" não tem stock suficiente. Disponível: ${currentInventory}, Solicitado: ${requestedQuantity}`,
-              variantId,
-              requestedQuantity,
-              availableQuantity: currentInventory,
-            },
-            { status: 400 }
+        console.log(
+          `Variant ${variantId} - Tracking: ${inventoryTracking}, Quantity: ${currentInventory}`
+        );
+
+        // Only validate inventory if tracking is enabled
+        if (inventoryTracking && inventoryTracking === "shopify") {
+          if (currentInventory < requestedQuantity) {
+            console.error(
+              `Insufficient inventory for variant ${variantId}: requested ${requestedQuantity}, available ${currentInventory}`
+            );
+            return NextResponse.json(
+              {
+                error: `Produto "${variant.title}" não tem stock suficiente. Disponível: ${currentInventory}, Solicitado: ${requestedQuantity}`,
+                variantId,
+                requestedQuantity,
+                availableQuantity: currentInventory,
+              },
+              { status: 400 }
+            );
+          }
+        } else {
+          console.log(
+            `Variant ${variantId} does not track inventory - skipping validation`
           );
         }
       } else {
@@ -304,7 +318,7 @@ ${deliveryOption === "delivery" ? `Taxa de entrega: 5,00€` : ""}`,
                   customerInfo.name.split(" ")[0] || customerInfo.name,
                 last_name:
                   customerInfo.name.split(" ").slice(1).join(" ") || "",
-                address1: "Rua das Flores, 123",
+                address1: "Rua Agostinho Cymbron 3, Fajã de Baixo",
                 address2: "",
                 city: "Ponta Delgada",
                 region: "Açores",
@@ -504,6 +518,20 @@ ${deliveryOption === "delivery" ? `Taxa de entrega: 5,00€` : ""}`,
       customerDetails = existingCustomer;
     }
 
+    // If we still don't have customer details, try to get them from the original form data
+    if (!customerDetails || !customerDetails.email) {
+      console.log("No customer details in order response, using form data");
+      const customerInfo =
+        deliveryOption === "pickup" ? pickupForm : deliveryForm;
+      customerDetails = {
+        first_name: customerInfo.name.split(" ")[0] || customerInfo.name,
+        last_name: customerInfo.name.split(" ").slice(1).join(" ") || "",
+        email: customerInfo.email,
+        phone: customerInfo.phone,
+      };
+      console.log("Constructed customer details from form:", customerDetails);
+    }
+
     // Decrement inventory for all items in the order
     try {
       console.log("Decrementing inventory for order items...");
@@ -531,37 +559,51 @@ ${deliveryOption === "delivery" ? `Taxa de entrega: 5,00€` : ""}`,
 
         if (variantResponse.ok) {
           const variantData = await variantResponse.json();
-          const currentInventory = variantData.variant.inventory_quantity || 0;
-          const inventoryItemId = variantData.variant.inventory_item_id;
-          const newInventory = Math.max(0, currentInventory - quantity);
+          const variant = variantData.variant;
+          const inventoryTracking = variant.inventory_management; // null if not tracking, 'shopify' if tracking
+          const currentInventory = variant.inventory_quantity || 0;
+          const inventoryItemId = variant.inventory_item_id;
 
           console.log(
-            `Variant ${variantId}: ${currentInventory} -> ${newInventory}`
+            `Variant ${variantId} - Tracking: ${inventoryTracking}, Current: ${currentInventory}`
           );
 
-          // Update inventory level using inventory levels API
-          const updateInventoryUrl = `https://${cleanDomain}.myshopify.com/admin/api/2025-01/inventory_levels/set.json`;
-          const updateResponse = await fetch(updateInventoryUrl, {
-            method: "POST",
-            headers: {
-              "X-Shopify-Access-Token": accessToken,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              location_id: 108441469312, // Your store location ID
-              inventory_item_id: inventoryItemId,
-              available: newInventory,
-            }),
-          });
+          // Only update inventory if tracking is enabled
+          if (inventoryTracking && inventoryTracking === "shopify") {
+            const newInventory = Math.max(0, currentInventory - quantity);
 
-          if (updateResponse.ok) {
             console.log(
-              `Successfully updated inventory for variant ${variantId}`
+              `Variant ${variantId}: ${currentInventory} -> ${newInventory}`
             );
+
+            // Update inventory level using inventory levels API
+            const updateInventoryUrl = `https://${cleanDomain}.myshopify.com/admin/api/2025-01/inventory_levels/set.json`;
+            const updateResponse = await fetch(updateInventoryUrl, {
+              method: "POST",
+              headers: {
+                "X-Shopify-Access-Token": accessToken,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                location_id: 108441469312, // Your store location ID
+                inventory_item_id: inventoryItemId,
+                available: newInventory,
+              }),
+            });
+
+            if (updateResponse.ok) {
+              console.log(
+                `Successfully updated inventory for variant ${variantId}`
+              );
+            } else {
+              console.error(
+                `Failed to update inventory for variant ${variantId}:`,
+                await updateResponse.text()
+              );
+            }
           } else {
-            console.error(
-              `Failed to update inventory for variant ${variantId}:`,
-              await updateResponse.text()
+            console.log(
+              `Variant ${variantId} does not track inventory - skipping update`
             );
           }
         } else {
@@ -575,6 +617,127 @@ ${deliveryOption === "delivery" ? `Taxa de entrega: 5,00€` : ""}`,
       console.error("Error updating inventory:", inventoryError);
       // Don't fail the order creation if inventory update fails
       // The order is already created successfully
+    }
+
+    // Send order confirmation email
+    try {
+      console.log("Sending order confirmation email...");
+      console.log(
+        "Customer details:",
+        JSON.stringify(customerDetails, null, 2)
+      );
+      console.log("Order customer:", JSON.stringify(order.customer, null, 2));
+
+      // Ensure we have a valid customer with email
+      if (!customerDetails || !customerDetails.email) {
+        console.error(
+          "No customer email found. CustomerDetails:",
+          customerDetails
+        );
+        console.error("Order customer:", order.customer);
+        console.error("Existing customer:", existingCustomer);
+        console.error(
+          "Form data:",
+          deliveryOption === "pickup" ? pickupForm : deliveryForm
+        );
+        throw new Error("Customer email is required for confirmation email");
+      }
+
+      // Extract pickup details from order note if it's a pickup order
+      let pickupDetails;
+      if (deliveryOption === "pickup" && pickupForm) {
+        pickupDetails = {
+          date: pickupForm.date,
+          time: pickupForm.time,
+        };
+      }
+
+      // Map order line items to email format and fetch product images
+      const emailItems = await Promise.all(
+        order.line_items.map(async (lineItem: any) => {
+          console.log("Line item data:", {
+            title: lineItem.title,
+            variant_id: lineItem.variant_id,
+            product_id: lineItem.product_id,
+          });
+
+          let productImage = null;
+
+          // Skip delivery fee product
+          if (lineItem.variant_id !== 15259729035648) {
+            try {
+              // Fetch product details to get the image
+              const productUrl = `https://${cleanDomain}.myshopify.com/admin/api/2025-01/products/${lineItem.product_id}.json`;
+              const productResponse = await fetch(productUrl, {
+                method: "GET",
+                headers: {
+                  "X-Shopify-Access-Token": accessToken,
+                  "Content-Type": "application/json",
+                },
+              });
+
+              if (productResponse.ok) {
+                const productData = await productResponse.json();
+                const product = productData.product;
+
+                // Get the image for the specific variant
+                if (product.images && product.images.length > 0) {
+                  // Try to find image for this specific variant
+                  const variantImage = product.images.find(
+                    (img: any) =>
+                      img.variant_ids &&
+                      img.variant_ids.includes(lineItem.variant_id)
+                  );
+
+                  if (variantImage) {
+                    productImage = variantImage.src;
+                  } else {
+                    // Fallback to first product image
+                    productImage = product.images[0].src;
+                  }
+                }
+
+                console.log(
+                  `Found image for product ${lineItem.product_id}:`,
+                  productImage
+                );
+              }
+            } catch (error) {
+              console.error(
+                `Error fetching product ${lineItem.product_id}:`,
+                error
+              );
+            }
+          }
+
+          return {
+            title: lineItem.title,
+            quantity: lineItem.quantity,
+            price: lineItem.price,
+            variantTitle: lineItem.variant_title,
+            image: productImage,
+          };
+        })
+      );
+
+      await sendOrderConfirmationEmail({
+        orderId: order.id.toString(),
+        orderName: order.name,
+        customer: customerDetails,
+        items: emailItems,
+        total: order.total_price,
+        currency: order.currency,
+        shippingAddress: order.shipping_address,
+        deliveryOption,
+        pickupDetails,
+        note: order.note,
+        createdAt: order.created_at,
+      });
+
+      console.log("Order confirmation email sent successfully");
+    } catch (emailError) {
+      console.error("Failed to send confirmation email:", emailError);
+      // Don't fail the order creation if email fails - log the error and continue
     }
 
     return NextResponse.json({
