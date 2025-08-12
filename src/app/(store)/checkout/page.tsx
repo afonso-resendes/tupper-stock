@@ -37,6 +37,414 @@ const CheckoutPage = () => {
 
   const deliveryLocations = ["Ponta Delgada", "Lagoa", "Ribeira Grande"];
 
+  // Valid Top Level Domains for email validation
+  const validTLDs = [
+    // Country codes (ccTLDs)
+    "pt",
+    "es",
+    "fr",
+    "de",
+    "it",
+    "uk",
+    "us",
+    "ca",
+    "au",
+    "br",
+    "mx",
+    "ar",
+    "cl",
+    "co",
+    "pe",
+    "ve",
+    "uy",
+    "py",
+    "bo",
+    "ec",
+    "gy",
+    "sr",
+    "gf",
+    "fk",
+    "gs",
+    "io",
+    "sh",
+    "tc",
+    "vg",
+    "ai",
+    "ag",
+    "bb",
+    "bs",
+    "bz",
+    "dm",
+    "gd",
+    "jm",
+    "kn",
+    "lc",
+    "ms",
+    "vc",
+    "tt",
+    "nl",
+    "be",
+    "ch",
+    "at",
+    "se",
+    "no",
+    "dk",
+    "fi",
+    "pl",
+    "cz",
+    "hu",
+    "ro",
+    "bg",
+    "hr",
+    "si",
+    "sk",
+    "ee",
+    "lv",
+    "lt",
+    "mt",
+    "cy",
+    "lu",
+    "ie",
+    "is",
+    "gr",
+    "tr",
+    "il",
+    "sa",
+    "ae",
+    "qa",
+    "kw",
+    "bh",
+    "om",
+    "jo",
+    "lb",
+    "sy",
+    "iq",
+    "ir",
+    "af",
+    "pk",
+    "in",
+    "bd",
+    "lk",
+    "np",
+    "bt",
+    "mm",
+    "th",
+    "kh",
+    "la",
+    "vn",
+    "my",
+    "sg",
+    "id",
+    "ph",
+    "tw",
+    "kr",
+    "jp",
+    "cn",
+    "hk",
+    "mo",
+    "mn",
+    "kz",
+    "uz",
+    "kg",
+    "tj",
+    "tm",
+    "az",
+    "ge",
+    "am",
+    "by",
+    "md",
+    "ua",
+    "ru",
+    "kz",
+    "uz",
+    "kg",
+    "tj",
+    "tm",
+    "az",
+    "ge",
+    "am",
+    "by",
+    "md",
+    "ua",
+    "ru",
+    // Generic TLDs (gTLDs)
+    "com",
+    "org",
+    "net",
+    "edu",
+    "gov",
+    "mil",
+    "int",
+    "info",
+    "biz",
+    "name",
+    "pro",
+    "aero",
+    "coop",
+    "museum",
+    "jobs",
+    "mobi",
+    "travel",
+    "cat",
+    "post",
+    "tel",
+    "xxx",
+    "asia",
+    "eu",
+    "arpa",
+    "root",
+    "local",
+    "onion",
+    "bit",
+    "coin",
+    "crypto",
+    "nft",
+    "web",
+    "app",
+    "dev",
+    "tech",
+    "io",
+    "ai",
+    "cloud",
+    "digital",
+    "online",
+    "site",
+    "store",
+    "shop",
+    "blog",
+    "news",
+    "media",
+    "tv",
+    "radio",
+    "music",
+    "video",
+    "photo",
+    "art",
+    "design",
+    "creative",
+    "agency",
+    "consulting",
+    "services",
+    "solutions",
+    "systems",
+    "software",
+    "platform",
+    "network",
+    "community",
+    "social",
+    "marketplace",
+    "exchange",
+    "trading",
+    "finance",
+    "banking",
+    "insurance",
+    "realestate",
+    "property",
+    "rental",
+    "hotel",
+    "restaurant",
+    "food",
+    "health",
+    "medical",
+    "fitness",
+    "sports",
+    "gaming",
+    "entertainment",
+    "education",
+    "training",
+    "research",
+    "science",
+    "technology",
+    "innovation",
+    "startup",
+    "business",
+    "corporate",
+    "enterprise",
+    "global",
+    "world",
+    "international",
+    "national",
+    "regional",
+    "local",
+    "city",
+    "town",
+    "village",
+    "country",
+    "state",
+    "province",
+    "district",
+    "area",
+    "zone",
+    "region",
+    "territory",
+    "island",
+    "mountain",
+    "river",
+    "lake",
+    "ocean",
+    "sea",
+    "forest",
+    "park",
+    "garden",
+    "farm",
+    "ranch",
+    "vineyard",
+    "winery",
+    "brewery",
+    "distillery",
+    "bakery",
+    "butcher",
+    "fishmonger",
+    "greengrocer",
+    "deli",
+    "cafe",
+    "bar",
+    "pub",
+    "club",
+    "lounge",
+    "theater",
+    "cinema",
+    "museum",
+    "gallery",
+    "library",
+    "school",
+    "college",
+    "university",
+    "academy",
+    "institute",
+    "foundation",
+    "charity",
+    "ngo",
+    "association",
+    "federation",
+    "union",
+    "guild",
+    "society",
+    "club",
+    "team",
+    "group",
+    "company",
+    "corporation",
+    "partnership",
+    "alliance",
+    "coalition",
+    "movement",
+    "campaign",
+    "initiative",
+    "project",
+    "program",
+    "service",
+    "product",
+    "brand",
+    "label",
+    "studio",
+    "workshop",
+    "factory",
+    "plant",
+    "facility",
+    "center",
+    "hub",
+    "base",
+    "station",
+    "terminal",
+    "port",
+    "airport",
+    "station",
+    "depot",
+    "warehouse",
+    "storage",
+    "archive",
+    "database",
+    "registry",
+    "directory",
+    "catalog",
+    "index",
+    "search",
+    "find",
+    "locate",
+    "map",
+    "guide",
+    "directory",
+    "listing",
+    "advertisement",
+    "promotion",
+    "marketing",
+    "advertising",
+    "publicity",
+    "communication",
+    "messaging",
+    "chat",
+    "forum",
+    "board",
+    "group",
+    "community",
+    "network",
+    "connection",
+    "relationship",
+    "partnership",
+    "collaboration",
+    "cooperation",
+    "support",
+    "help",
+    "assistance",
+    "service",
+    "care",
+    "maintenance",
+    "repair",
+    "installation",
+    "setup",
+    "configuration",
+    "customization",
+    "personalization",
+    "optimization",
+    "improvement",
+    "enhancement",
+    "upgrade",
+    "update",
+    "version",
+    "release",
+    "edition",
+    "series",
+    "collection",
+    "set",
+    "package",
+    "bundle",
+    "kit",
+    "tool",
+    "equipment",
+    "instrument",
+    "device",
+    "machine",
+    "appliance",
+    "gadget",
+    "accessory",
+    "component",
+    "part",
+    "piece",
+    "unit",
+    "module",
+    "system",
+    "platform",
+    "framework",
+    "library",
+    "api",
+    "sdk",
+    "plugin",
+    "extension",
+    "addon",
+    "widget",
+    "app",
+    "application",
+    "program",
+    "software",
+    "utility",
+    "tool",
+    "service",
+    "platform",
+    "solution",
+    "product",
+  ];
+
   // Function to get postal code prefix based on location
   const getPostalCodePrefix = (location: string) => {
     switch (location) {
@@ -63,6 +471,87 @@ const CheckoutPage = () => {
     e.preventDefault();
     setIsSubmitting(true);
     setError("");
+
+    // Validate phone number format before submission
+    const currentForm = deliveryOption === "pickup" ? pickupForm : deliveryForm;
+    if (
+      currentForm.phone &&
+      currentForm.phone.replace(/\D/g, "").length !== 9
+    ) {
+      setError("O número de telefone deve ter exatamente 9 dígitos");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Validate email format before submission - more strict validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(currentForm.email)) {
+      setError(
+        "Por favor, insira um endereço de email válido (ex: exemplo@gmail.com)"
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Validate TLD (Top Level Domain) - only allow real, valid TLDs
+    const emailParts = currentForm.email.split("@");
+    if (emailParts.length !== 2) {
+      setError("Formato de email inválido");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const domain = emailParts[1];
+    const tld = domain.split(".").pop()?.toLowerCase();
+
+    if (!tld || !validTLDs.includes(tld)) {
+      setError(
+        `Domínio inválido. TLD "${tld}" não é reconhecido. Use domínios válidos como .com, .pt, .org, etc.`
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Validate name is not empty
+    if (!currentForm.name || currentForm.name.trim().length < 2) {
+      setError("Por favor, insira o seu nome completo (mínimo 2 caracteres)");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Validate phone number
+    if (
+      !currentForm.phone ||
+      currentForm.phone.replace(/\D/g, "").length !== 9
+    ) {
+      setError("Por favor, insira um número de telefone válido com 9 dígitos");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Additional validation for delivery orders
+    if (deliveryOption === "delivery") {
+      if (!deliveryForm.street || deliveryForm.street.trim().length < 3) {
+        setError("Por favor, insira o nome da rua (mínimo 3 caracteres)");
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (!deliveryForm.number || deliveryForm.number.trim().length < 1) {
+        setError("Por favor, insira o número da porta");
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (
+        !deliveryForm.postalCode ||
+        deliveryForm.postalCode.trim().length !== 3
+      ) {
+        setError("Por favor, insira um código postal válido com 3 dígitos");
+        setIsSubmitting(false);
+        return;
+      }
+    }
 
     try {
       // Prepare order data
@@ -373,6 +862,9 @@ const CheckoutPage = () => {
                         className="w-full px-4 py-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black text-base text-gray-900 placeholder-gray-500"
                         placeholder="Digite o seu email"
                       />
+                      <p className="text-sm text-gray-500 mt-1">
+                        Formato: exemplo@dominio.com
+                      </p>
                     </div>
                     <div>
                       <label className="block text-base font-medium text-gray-700 mb-3">
@@ -382,12 +874,17 @@ const CheckoutPage = () => {
                         type="tel"
                         required
                         value={pickupForm.phone}
-                        onChange={(e) =>
-                          handlePickupFormChange("phone", e.target.value)
-                        }
+                        onChange={(e) => {
+                          // Only allow digits
+                          const value = e.target.value.replace(/\D/g, "");
+                          handlePickupFormChange("phone", value);
+                        }}
                         className="w-full px-4 py-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black text-base text-gray-900 placeholder-gray-500"
-                        placeholder="Digite o seu telefone"
+                        placeholder="Digite o seu telefone (9 dígitos)"
                       />
+                      <p className="text-sm text-gray-500 mt-1">
+                        Formato: 9 dígitos (ex: 912345678)
+                      </p>
                     </div>
                     {/* Pickup Hours Disclaimer */}
                     <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
@@ -546,6 +1043,9 @@ const CheckoutPage = () => {
                             className="w-full px-4 py-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black text-base text-gray-900 placeholder-gray-500"
                             placeholder="Digite o seu email"
                           />
+                          <p className="text-sm text-gray-500 mt-1">
+                            Formato: exemplo@dominio.com
+                          </p>
                         </div>
                         <div>
                           <label className="block text-base font-medium text-gray-700 mb-3">
@@ -555,12 +1055,17 @@ const CheckoutPage = () => {
                             type="tel"
                             required
                             value={deliveryForm.phone}
-                            onChange={(e) =>
-                              handleDeliveryFormChange("phone", e.target.value)
-                            }
+                            onChange={(e) => {
+                              // Only allow digits
+                              const value = e.target.value.replace(/\D/g, "");
+                              handleDeliveryFormChange("phone", value);
+                            }}
                             className="w-full px-4 py-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black text-base text-gray-900 placeholder-gray-500"
-                            placeholder="Digite o seu telefone"
+                            placeholder="Digite o seu telefone (9 dígitos)"
                           />
+                          <p className="text-sm text-gray-500 mt-1">
+                            Formato: 9 dígitos (ex: 912345678)
+                          </p>
                         </div>
                         <div>
                           <label className="block text-base font-medium text-gray-700 mb-3">
