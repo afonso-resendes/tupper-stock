@@ -9,14 +9,14 @@ const Hero = () => {
           <div className="space-y-6 sm:space-y-8">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-light text-gray-900 leading-tight">
               TupperStock
-              <span className="block font-medium text-gray-700">
-                Tupperware Premium Açores
+              <span className="block font-medium text-gray-700 mt-4">
+                Produtos Tupperware Premium Açores
               </span>
             </h1>
             <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-lg">
-              Loja online de Tupperware nos Açores. Recipientes premium para
-              armazenamento de alimentos, frescos por mais tempo. Entrega ao
-              domicílio e levantamento local. Qualidade garantida.
+              Loja online de produtos Tupperware nos Açores. Recipientes premium
+              para armazenamento de alimentos, frescos por mais tempo. Entrega
+              ao domicílio e levantamento local. Qualidade garantida.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/todos">
