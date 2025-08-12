@@ -278,6 +278,7 @@ ${deliveryOption === "delivery" ? `Taxa de entrega: 5,00€` : ""}`,
 
     const restOrderData = {
       order: {
+        email: customerInfo.email,
         line_items: lineItems,
         total_price: finalTotal.toString(),
         currency: "EUR",
@@ -305,15 +306,62 @@ ${deliveryOption === "delivery" ? `Taxa de entrega: 5,00€` : ""}`,
                 province_code: "PT-20",
                 country: "Portugal",
                 country_code: "PT",
-                zip: customerInfo.postalCode
-                  ? `${getPostalCodePrefix(selectedLocation)}-${
-                      customerInfo.postalCode
-                    }`
-                  : "9500-445",
+                zip:
+                  customerInfo.postalCode &&
+                  customerInfo.postalCode.trim() !== ""
+                    ? `${getPostalCodePrefix(selectedLocation)}-${customerInfo.postalCode.trim()}`
+                    : "9500-445",
                 phone: formatPhoneNumber(customerInfo.phone),
+                company: "",
+                latitude: null,
+                longitude: null,
               }
             : {
                 // Default shipping address for pickup orders (required by Shopify)
+                first_name:
+                  customerInfo.name.split(" ")[0] || customerInfo.name,
+                last_name:
+                  customerInfo.name.split(" ").slice(1).join(" ") || "",
+                address1: "Rua Agostinho Cymbron 3, Fajã de Baixo",
+                address2: "",
+                city: "Ponta Delgada",
+                region: "Açores",
+                state: "Açores",
+                province: "Açores",
+                province_code: "PT-20",
+                country: "Portugal",
+                country_code: "PT",
+                zip: "9500-445",
+                phone: formatPhoneNumber(customerInfo.phone),
+              },
+        billing_address:
+          deliveryOption === "delivery"
+            ? {
+                first_name:
+                  customerInfo.name.split(" ")[0] || customerInfo.name,
+                last_name:
+                  customerInfo.name.split(" ").slice(1).join(" ") || "",
+                address1: customerInfo.street,
+                address2: customerInfo.number,
+                city: selectedLocation,
+                region: "Açores",
+                state: "Açores",
+                province: "Açores",
+                province_code: "PT-20",
+                country: "Portugal",
+                country_code: "PT",
+                zip:
+                  customerInfo.postalCode &&
+                  customerInfo.postalCode.trim() !== ""
+                    ? `${getPostalCodePrefix(selectedLocation)}-${customerInfo.postalCode.trim()}`
+                    : "9500-445",
+                phone: formatPhoneNumber(customerInfo.phone),
+                company: "",
+                latitude: null,
+                longitude: null,
+              }
+            : {
+                // Default billing address for pickup orders
                 first_name:
                   customerInfo.name.split(" ")[0] || customerInfo.name,
                 last_name:
@@ -334,13 +382,32 @@ ${deliveryOption === "delivery" ? `Taxa de entrega: 5,00€` : ""}`,
           deliveryOption === "pickup"
             ? "Levantamento Local"
             : "Entrega ao Domicílio"
-        }`,
+        }
+${deliveryOption === "delivery" ? `Endereco: ${customerInfo.street} ${customerInfo.number}, ${selectedLocation}` : ""}`,
         tags: [deliveryOption === "pickup" ? "pickup" : "delivery"],
       },
     };
 
     console.log("REST API order data:", JSON.stringify(restOrderData, null, 2));
     console.log("REST API URL:", restApiUrl);
+
+    // Debug: Log the specific shipping address being sent
+    if (deliveryOption === "delivery") {
+      console.log("=== DELIVERY ADDRESS DEBUG ===");
+      console.log("Street:", customerInfo.street);
+      console.log("Number:", customerInfo.number);
+      console.log("City:", selectedLocation);
+      console.log("Postal Code:", customerInfo.postalCode);
+      console.log(
+        "Full Postal Code:",
+        customerInfo.postalCode
+          ? `${getPostalCodePrefix(selectedLocation)}-${customerInfo.postalCode}`
+          : "9500-445"
+      );
+      console.log("Phone:", customerInfo.phone);
+      console.log("Formatted Phone:", formatPhoneNumber(customerInfo.phone));
+      console.log("=== END DELIVERY ADDRESS DEBUG ===");
+    }
 
     // First, try to find existing customer by email
     const customerSearchUrl = `https://${cleanDomain}.myshopify.com/admin/api/2025-01/customers/search.json?query=email:${encodeURIComponent(
@@ -475,6 +542,40 @@ ${deliveryOption === "delivery" ? `Taxa de entrega: 5,00€` : ""}`,
       JSON.stringify(restResponseData, null, 2)
     );
 
+    // Debug: Log the shipping address from Shopify response
+    if (
+      restResponse.ok &&
+      restResponseData.order &&
+      restResponseData.order.shipping_address
+    ) {
+      console.log("=== SHIPPING ADDRESS FROM SHOPIFY ===");
+      console.log(
+        "Full shipping address:",
+        JSON.stringify(restResponseData.order.shipping_address, null, 2)
+      );
+      console.log(
+        "Address1:",
+        restResponseData.order.shipping_address.address1
+      );
+      console.log(
+        "Address2:",
+        restResponseData.order.shipping_address.address2
+      );
+      console.log("City:", restResponseData.order.shipping_address.city);
+      console.log("Zip:", restResponseData.order.shipping_address.zip);
+      console.log("Country:", restResponseData.order.shipping_address.country);
+      console.log("=== END SHIPPING ADDRESS FROM SHOPIFY ===");
+    }
+
+    // Debug: Log the entire order response to see all available fields
+    if (restResponse.ok && restResponseData.order) {
+      console.log("=== FULL ORDER RESPONSE FROM SHOPIFY ===");
+      console.log("Order ID:", restResponseData.order.id);
+      console.log("Order Name:", restResponseData.order.name);
+      console.log("All order fields:", Object.keys(restResponseData.order));
+      console.log("=== END FULL ORDER RESPONSE ===");
+    }
+
     if (!restResponse.ok) {
       console.error("REST API error:", restResponseData);
 
@@ -512,9 +613,37 @@ ${deliveryOption === "delivery" ? `Taxa de entrega: 5,00€` : ""}`,
 
     const order = restResponseData.order;
 
+    // Fetch the complete order details to get the full shipping address
+    console.log("Fetching complete order details...");
+    const completeOrderUrl = `https://${cleanDomain}.myshopify.com/admin/api/2025-01/orders/${order.id}.json`;
+    const completeOrderResponse = await fetch(completeOrderUrl, {
+      method: "GET",
+      headers: {
+        "X-Shopify-Access-Token": accessToken,
+        "Content-Type": "application/json",
+      },
+    });
+
+    let completeOrder = order;
+    if (completeOrderResponse.ok) {
+      const completeOrderData = await completeOrderResponse.json();
+      completeOrder = completeOrderData.order;
+      console.log("=== COMPLETE ORDER DETAILS ===");
+      console.log("Full order:", JSON.stringify(completeOrder, null, 2));
+      if (completeOrder.shipping_address) {
+        console.log(
+          "Complete shipping address:",
+          JSON.stringify(completeOrder.shipping_address, null, 2)
+        );
+      }
+      console.log("=== END COMPLETE ORDER DETAILS ===");
+    } else {
+      console.log("Failed to fetch complete order details");
+    }
+
     // If we used an existing customer, fetch their details to include in response
-    let customerDetails = order.customer;
-    if (existingCustomer && !order.customer) {
+    let customerDetails = completeOrder.customer;
+    if (existingCustomer && !completeOrder.customer) {
       customerDetails = existingCustomer;
     }
 
@@ -740,18 +869,38 @@ ${deliveryOption === "delivery" ? `Taxa de entrega: 5,00€` : ""}`,
       // Don't fail the order creation if email fails - log the error and continue
     }
 
+    // Construct the full shipping address from form data for delivery orders
+    let fullShippingAddress = completeOrder.shipping_address;
+    if (deliveryOption === "delivery" && deliveryForm) {
+      fullShippingAddress = {
+        ...completeOrder.shipping_address,
+        address1: deliveryForm.street,
+        address2: deliveryForm.number,
+        city: selectedLocation,
+        zip:
+          deliveryForm.postalCode && deliveryForm.postalCode.trim() !== ""
+            ? `${getPostalCodePrefix(selectedLocation)}-${deliveryForm.postalCode.trim()}`
+            : "9500-445",
+        // Include all the fields we sent to Shopify
+        street: deliveryForm.street,
+        number: deliveryForm.number,
+        postalCode: deliveryForm.postalCode,
+        selectedLocation: selectedLocation,
+      };
+    }
+
     return NextResponse.json({
       success: true,
       order: {
-        id: order.id,
-        name: order.name,
-        total: order.total_price,
-        currency: order.currency,
+        id: completeOrder.id,
+        name: completeOrder.name,
+        total: completeOrder.total_price,
+        currency: completeOrder.currency,
         customer: customerDetails,
-        shippingAddress: order.shipping_address,
-        note: order.note,
-        tags: order.tags,
-        createdAt: order.created_at,
+        shippingAddress: fullShippingAddress,
+        note: completeOrder.note,
+        tags: completeOrder.tags,
+        createdAt: completeOrder.created_at,
       },
     });
   } catch (error) {

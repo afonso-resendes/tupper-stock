@@ -153,8 +153,8 @@ const ProductPage = () => {
     product.images && product.images.length > 0
       ? product.images
       : product.image
-      ? [product.image]
-      : [];
+        ? [product.image]
+        : [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -441,8 +441,8 @@ const ProductPage = () => {
                   {cartLoading
                     ? "Adicionando..."
                     : product.availableForSale
-                    ? "Adicionar ao Carrinho"
-                    : "Indisponível"}
+                      ? "Adicionar ao Carrinho"
+                      : "Indisponível"}
                 </button>
 
                 {/* Product Info */}
@@ -591,6 +591,16 @@ const ProductPage = () => {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Ver todos os produtos button */}
+          <div className="text-center mt-8">
+            <Link
+              href="/todos"
+              className="inline-flex items-center px-6 py-3 text-base font-medium text-white bg-black hover:bg-gray-800 rounded-lg transition-colors duration-200"
+            >
+              Ver todos os produtos
+            </Link>
           </div>
         </div>
       )}
