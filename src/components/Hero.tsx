@@ -25,6 +25,7 @@ const Hero = () => {
                 </button>
               </Link>
             </div>
+
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 text-sm text-gray-500">
               <div className="flex items-center space-x-2">
                 <svg
