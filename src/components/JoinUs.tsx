@@ -18,7 +18,7 @@ const JoinUs = () => {
             </h2>
             <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
               Felizmente, a Tupperware anunciou que irá retomar a sua atividade
-              em setembro de 2025!
+              em breve!
             </p>
             <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
               Se gostavas de fazer parte deste mundo e gerar uma renda extra,
