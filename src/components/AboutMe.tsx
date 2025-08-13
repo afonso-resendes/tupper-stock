@@ -37,10 +37,11 @@ const AboutMe = () => {
               através da oportunidade de negócio.
             </p>
             <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
-              Estou dedicada à Tupperware desde 2018. Têm sido anos de muito
-              trabalho, mas também de muitas conquistas. Criei uma equipa grande
-              e vencedora, e juntos vendemos milhares de produtos Tupperware,
-              levando a casa dos clientes o melhor produto do mundo.
+              Estive dedicada à liderança da equipa da Tupperware Açores desde
+              2018. Têm sido anos de muito trabalho, mas também de muitas
+              conquistas. Criei uma equipa grande e vencedora, e juntos vendemos
+              milhares de produtos Tupperware, levando a casa dos clientes o
+              melhor produto do mundo.
             </p>
             <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
               Infelizmente, em 2025, a Tupperware anunciou o encerramento da sua
