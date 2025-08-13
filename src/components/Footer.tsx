@@ -43,7 +43,7 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 leading-relaxed max-w-2xl mx-auto px-4">
-              TupperStock - Loja online de Tupperware nos Açores. Recipientes
+              TupperStock - Loja online de Tupperware nos Açores. Produtos
               premium para armazenamento de alimentos, frescos por mais tempo.
               Entrega ao domicílio e levantamento local. Qualidade garantida.
             </p>
