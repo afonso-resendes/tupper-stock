@@ -16,7 +16,7 @@ const Hero = () => {
             <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-lg">
               Loja online de produtos Tupperware nos Açores. Recipientes premium
               para armazenamento de alimentos, frescos por mais tempo. Entrega
-              ao domicílio e levantamento local. Qualidade garantida.
+              ao domicílio ou levantamento no local. Qualidade garantida.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/todos">
